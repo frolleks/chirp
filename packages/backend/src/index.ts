@@ -1,9 +1,12 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { auth } from "./auth";
 
-const app = new Hono()
+const app = new Hono().basePath("/v1");
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.get("/", (c) => {
+  return c.text("Hello Hono!");
+});
 
-export default app
+app.route("/auth", auth);
+
+export default app;

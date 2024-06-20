@@ -7,6 +7,8 @@ export const users = pgTable("users", {
     .$defaultFn(() => createId())
     .primaryKey(),
   username: varchar("username", { length: 32 }).unique().notNull(),
+  email: text("email").unique(),
+  passwordHash: text("password_hash"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
 });
