@@ -5,9 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Hash } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/iconify-icon";
+import { useSession } from "@/lib/utils";
 
 export function HomeNavbar() {
   const pathname = usePathname();
+  const { data: session, isLoading, error } = useSession();
+
+  console.log(session);
 
   return (
     <div className="flex flex-col w-56">
