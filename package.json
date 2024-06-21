@@ -1,6 +1,15 @@
 {
   "name": "chirp",
   "type": "module",
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "dev:web": "bun run --filter 'web' dev",
+    "dev:backend": "bun run --filter 'backend' dev",
+    "db:push": "bun run --filter 'backend' db:push",
+    "db:generate": "bun run --filter 'backend' db:generate",
+    "db:migrate": "bun run --filter 'backend' db:migrate",
+    "drizzle-studio": "bun run --filter 'backend' studio"
+  },
   "workspaces": [
     "packages/*"
   ],
