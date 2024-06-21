@@ -33,9 +33,13 @@ export function SignUpForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    fetch("/api/v1/auth/sign-up", {
+      body: JSON.stringify(values),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   const nextStep = () => setStep(step + 1);
