@@ -12,7 +12,6 @@ export function cn(...inputs: ClassValue[]) {
  * @export
  * @return {SWRResponse<any, any, any>}
  */
-
 export function useSession() {
   const fetcher = (args: any) => fetch(args).then((res) => res.json());
   return useSWR("/api/v1/auth/session", fetcher);
