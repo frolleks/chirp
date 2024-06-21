@@ -11,8 +11,6 @@ export function HomeNavbar() {
   const pathname = usePathname();
   const { data: session, isLoading, error } = useSession();
 
-  console.log(session);
-
   return (
     <div className="flex flex-col w-56">
       <Link href="/">
@@ -43,9 +41,13 @@ export function HomeNavbar() {
           Explore
         </Button>
       </Link>
-      <Link href="/sign-in" className="mt-3">
-        <Button className="w-full">Sign In</Button>
-      </Link>
+      {session ? (
+        <Button className="mt-3">Post</Button>
+      ) : (
+        <Link href="/sign-in" className="mt-3">
+          <Button className="w-full">Sign In</Button>
+        </Link>
+      )}
     </div>
   );
 }
