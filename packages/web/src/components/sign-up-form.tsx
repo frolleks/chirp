@@ -24,6 +24,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSession } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   username: z.string().max(64),
@@ -41,6 +43,12 @@ export function SignUpForm() {
       password: "",
     },
   });
+
+  const { data: session, isLoading, error } = useSession();
+
+  if (session) {
+    redirect("/");
+  }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     fetch("/api/v1/auth/sign-up", {
