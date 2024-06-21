@@ -10,6 +10,6 @@ app.get("/", (c) => {
 app.route("/auth", auth);
 
 export default {
-  port: Number(process.env.PORT),
+  port: Number(process.env.API_PORT),
   fetch: app.fetch,
 };
