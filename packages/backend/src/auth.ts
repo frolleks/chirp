@@ -5,7 +5,7 @@ import { db } from "./lib/db";
 import { users } from "./lib/db/schema";
 import { eq } from "drizzle-orm";
 import { lucia } from "./lib/lucia";
-import { setCookie } from "hono/cookie";
+import { getCookie, setCookie } from "hono/cookie";
 
 export const auth = new Hono();
 
@@ -97,3 +97,39 @@ auth.post(
     return c.redirect("/", 302);
   }
 );
+
+auth.get("/session", async (c) => {
+  try {
+    const sessionCookie = c.req.header("Cookie");
+    const tokenHeader = c.req.header("Authorization");
+
+    if (!sessionCookie && !tokenHeader) {
+      return c.status(401);
+    }
+
+    let sessionId;
+    if (sessionCookie) {
+      sessionId = lucia.readSessionCookie(sessionCookie);
+    }
+
+    if (sessionId) {
+      const { user } = await lucia.validateSession(sessionId);
+      return c.json({ user });
+    }
+
+    let bearerToken;
+    if (tokenHeader) {
+      bearerToken = lucia.readBearerToken(tokenHeader);
+    }
+
+    if (bearerToken) {
+      const { user } = await lucia.validateSession(bearerToken);
+      return c.json({ user });
+    }
+
+    return c.status(401);
+  } catch (error) {
+    console.error("Error validating session:", error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
+});
