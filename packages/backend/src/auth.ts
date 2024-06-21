@@ -25,15 +25,14 @@ auth.post(
     const { token } = c.req.query();
 
     try {
-      await db.insert(users).values({
-        username: body.username,
-        email: body.email,
-        passwordHash,
-      });
       const user = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, body.email));
+        .insert(users)
+        .values({
+          username: body.username,
+          email: body.email,
+          passwordHash,
+        })
+        .returning({ id: users.id });
 
       const session = await lucia.createSession(user[0].id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
@@ -42,11 +41,16 @@ auth.post(
         return c.json({ token: session.id }, 201);
       }
 
-      setCookie(c, "auth_token", sessionCookie.serialize());
+      setCookie(
+        c,
+        sessionCookie.name,
+        sessionCookie.value,
+        sessionCookie.attributes
+      );
 
       return c.redirect("/", 302);
     } catch (error) {
-      return c.json({ error: "Bad response" }, 400);
+      return c.json({ error: "Internal server error" }, 500);
     }
   }
 );
