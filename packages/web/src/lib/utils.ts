@@ -1,17 +1,17 @@
 import { type ClassValue, clsx } from "clsx";
-import useSWR from "swr";
+import useSWR, { type SWRResponse } from "swr";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface Session {
-  user: {
-    email: string;
-    id: string;
-  };
-}
+/**
+ * A React hook for getting the session data.
+ *
+ * @export
+ * @return {SWRResponse<any, any, any>}
+ */
 
 export function useSession() {
   const fetcher = (args: any) => fetch(args).then((res) => res.json());
