@@ -11,17 +11,17 @@ export function HomeNavbar() {
 
   return (
     <div className="flex flex-col w-56">
-      <Link href="/home">
+      <Link href="/">
         <p className="p-3 font-semibold">chirp</p>
       </Link>
 
-      <Link href="/home">
+      <Link href="/">
         <Button
           className="justify-start gap-2 w-full"
           variant="ghost"
           size="sm"
         >
-          {pathname === "/home" ? (
+          {pathname === "/" ? (
             <Icon icon="fluent:home-48-filled" fontSize={20} />
           ) : (
             <Icon icon="fluent:home-48-regular" fontSize={20} />
