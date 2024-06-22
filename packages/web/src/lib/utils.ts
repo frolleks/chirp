@@ -7,12 +7,17 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Wrapper for fetch for use with swr.
+ * @param args
+ */
+export const fetcher = (args: any) => fetch(args).then((res) => res.json());
+
+/**
  * A React hook for getting the session data.
  *
  * @export
  * @return {SWRResponse<any, any, any>}
  */
 export function useSession() {
-  const fetcher = (args: any) => fetch(args).then((res) => res.json());
   return useSWR("/api/v1/auth/session", fetcher);
 }
