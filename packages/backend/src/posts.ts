@@ -68,7 +68,17 @@ posts.get("/", async (c) => {
   const maxPosts = Number(c.req.query("max"));
 
   if (maxPosts <= 50) {
-    const allPosts = await db.select().from(postsTable).limit(maxPosts);
+    const allPosts = await db.query.posts.findMany({
+      with: {
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
 
     return c.json(allPosts);
   }
