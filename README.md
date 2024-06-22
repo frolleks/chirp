@@ -1,15 +1,11 @@
 # chirp
 
-To install dependencies:
+a twitter clone i made for learning
 
-```bash
-bun install
-```
+## stack
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.1.15. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+- Next.js (frontend, i know it's a fullstack framework but i'm learning other ways)
+- Hono (backend)
+- Drizzle ORM
+- PostgreSQL (database)
+- lucia (auth)
