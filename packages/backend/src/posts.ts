@@ -7,7 +7,7 @@ import { db } from "./lib/db";
 import { posts as postsTable } from "./lib/db/schema";
 import { eq } from "drizzle-orm";
 
-const posts = new Hono();
+export const posts = new Hono();
 
 posts.post(
   "/new",
@@ -18,25 +18,30 @@ posts.post(
     })
   ),
   async (c) => {
-    const body = c.req.valid("json");
-    const sessionId =
-      getCookie(c, "auth_session") || c.req.header("Authorization");
+    try {
+      const body = c.req.valid("json");
+      const sessionId =
+        getCookie(c, "auth_session") || c.req.header("Authorization");
 
-    if (!sessionId) {
-      return c.status(401);
+      if (!sessionId) {
+        return c.status(401);
+      }
+
+      const session = await lucia.validateSession(sessionId);
+
+      if (!session) {
+        return c.status(401);
+      }
+
+      await db
+        .insert(postsTable)
+        .values({ content: body.content, authorId: session.user?.id });
+
+      return c.json({ message: "Post successfully created!" }, 201);
+    } catch (error) {
+      console.error(error);
+      return c.status(500);
     }
-
-    const session = await lucia.validateSession(sessionId);
-
-    if (!session) {
-      return c.status(401);
-    }
-
-    await db
-      .insert(postsTable)
-      .values({ content: body.content, authorId: session.user?.id });
-
-    return c.status(201);
   }
 );
 
