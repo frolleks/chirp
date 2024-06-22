@@ -11,9 +11,6 @@ users.get("/:id", async (c) => {
 
     const user = await db.query.users.findFirst({
       where: or(eq(usersTable.id, id), eq(usersTable.username, id)),
-      with: {
-        posts: true,
-      },
       columns: {
         id: true,
         username: true,
@@ -38,6 +35,15 @@ users.get("/:id/posts", async (c) => {
 
     const posts = await db.query.posts.findMany({
       where: eq(postsTable.authorId, id),
+      with: {
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            createdAt: true,
+          },
+        },
+      },
     });
 
     if (!posts) {
