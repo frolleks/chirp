@@ -1,5 +1,9 @@
-import Image from "next/image";
+import { HomeTimeline } from "@/components/home-timeline";
 
 export default function Home() {
-  return <div>home</div>;
+  return (
+    <div>
+      <HomeTimeline />
+    </div>
+  );
 }
