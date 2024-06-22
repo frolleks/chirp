@@ -12,25 +12,28 @@ export function HomePostForm() {
     e.preventDefault();
 
     try {
-      // Mutate the cache by posting new data
-      await mutate(
-        "/api/v1/posts/new",
-        async () => {
-          const response = await fetch("/api/v1/posts/new", {
-            method: "POST",
-            body: JSON.stringify({
-              content: postContent,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          return await response.json();
+      // Submit the form data using Fetch API
+      await fetch("/api/v1/posts/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        false
-      );
+        body: JSON.stringify({ content: postContent }),
+      });
 
+      // Clear the form after successful submission
       setPostContent("");
+
+      // Trigger a revalidation of the posts
+      mutate(
+        "/api/v1/posts?max=50",
+        async () => {
+          const response = await fetch("/api/v1/posts?max=50");
+          const data = await response.json();
+          return data;
+        },
+        true
+      );
     } catch (error) {
       console.error("Error submitting post:", error);
     }
