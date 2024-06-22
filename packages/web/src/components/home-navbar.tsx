@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Hash } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/iconify-icon";
 import { useSession } from "@/lib/utils";
@@ -12,7 +11,7 @@ export function HomeNavbar() {
   const { data: session, isLoading, error } = useSession();
 
   return (
-    <div className="flex flex-col w-56">
+    <div className="flex flex-col w-64 h-screen">
       <Link href="/">
         <p className="p-3 font-semibold">chirp</p>
       </Link>
@@ -37,10 +36,33 @@ export function HomeNavbar() {
           variant="ghost"
           size="sm"
         >
-          <Hash size={20} />
+          {pathname === `/explore` ? (
+            <Icon icon="ph:hash-bold" fontSize={20} />
+          ) : (
+            <Icon icon="ph:hash" fontSize={20} />
+          )}
           Explore
         </Button>
       </Link>
+      {session ? (
+        <Link href={`/users/${session.user.id}`}>
+          <Button
+            className="justify-start gap-2 w-full"
+            variant="ghost"
+            size="sm"
+          >
+            {pathname === `/users/${session.user.id}` ? (
+              <Icon icon="bxs:user" fontSize={20} />
+            ) : (
+              <Icon icon="bx:user" fontSize={20} />
+            )}
+            Profile
+          </Button>
+        </Link>
+      ) : (
+        <></>
+      )}
+
       {session ? (
         <Button className="mt-3">Post</Button>
       ) : (
