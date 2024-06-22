@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { db } from "./lib/db";
 import { users as usersTable, posts as postsTable } from "./lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 export const users = new Hono();
 
@@ -10,7 +10,7 @@ users.get("/:id", async (c) => {
     const id = c.req.param("id");
 
     const user = await db.query.users.findFirst({
-      where: eq(usersTable.id, id) || eq(usersTable.username, id),
+      where: or(eq(usersTable.id, id), eq(usersTable.username, id)),
       with: {
         posts: true,
       },
