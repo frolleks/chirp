@@ -6,9 +6,11 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex">
-      <HomeNavbar />
-      {children}
+    <div className="flex w-full justify-center gap-x-3">
+      <header>
+        <HomeNavbar />
+      </header>
+      <main>{children}</main>
     </div>
   );
 }
