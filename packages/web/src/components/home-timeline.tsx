@@ -25,7 +25,8 @@ export function HomeTimeline() {
       <ScrollArea className="flex-1 overflow-y-auto">
         {data
           .sort(
-            (a: any, b: any) => new Date(b.createdAt) - new Date(a.createdAt)
+            (a: any, b: any) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
           .map((post: any) => (
             <Post key={post.id} post={post} />
