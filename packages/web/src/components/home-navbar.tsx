@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { Icon } from "@/components/iconify-icon";
 import { useSession } from "@/lib/utils";
+import { ProfileLink } from "./profile-link";
+import { NavLink } from "./nav-link";
 
 export function HomeNavbar() {
   const pathname = usePathname();
@@ -15,54 +16,23 @@ export function HomeNavbar() {
       <Link href="/">
         <p className="p-3 font-semibold">chirp</p>
       </Link>
-
-      <Link href="/">
-        <Button
-          className="justify-start gap-2 w-full"
-          variant="ghost"
-          size="sm"
-        >
-          {pathname === "/" ? (
-            <Icon icon="fluent:home-48-filled" fontSize={20} />
-          ) : (
-            <Icon icon="fluent:home-48-regular" fontSize={20} />
-          )}
-          Home
-        </Button>
-      </Link>
-      <Link href="/explore">
-        <Button
-          className="justify-start gap-2 w-full"
-          variant="ghost"
-          size="sm"
-        >
-          {pathname === `/explore` ? (
-            <Icon icon="ph:hash-bold" fontSize={20} />
-          ) : (
-            <Icon icon="ph:hash" fontSize={20} />
-          )}
-          Explore
-        </Button>
-      </Link>
-      {session ? (
-        <Link href={`/users/${session.user.username}`}>
-          <Button
-            className="justify-start gap-2 w-full"
-            variant="ghost"
-            size="sm"
-          >
-            {pathname === `/users/${session.user.username}` ? (
-              <Icon icon="bxs:user" fontSize={20} />
-            ) : (
-              <Icon icon="bx:user" fontSize={20} />
-            )}
-            Profile
-          </Button>
-        </Link>
-      ) : (
-        <></>
-      )}
-
+      <NavLink
+        href="/"
+        isActive={pathname === "/"}
+        iconActive="fluent:home-48-filled"
+        iconInactive="fluent:home-48-regular"
+      >
+        Home
+      </NavLink>
+      <NavLink
+        href="/explore"
+        isActive={pathname === "/explore"}
+        iconActive="ph:hash-bold"
+        iconInactive="ph:hash"
+      >
+        Explore
+      </NavLink>
+      {session && <ProfileLink session={session} pathname={pathname} />}
       {session ? (
         <Button className="mt-3">Post</Button>
       ) : (
