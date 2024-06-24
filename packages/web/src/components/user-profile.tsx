@@ -1,23 +1,23 @@
 "use client";
 
-import { fetcher } from "@/lib/utils";
-import useSWR from "swr";
+import { getPostsByUserId, getUser, sortPostsByDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Post } from "./post";
 import { assert } from "@sindresorhus/is";
+import { PostList } from "./post-list";
+import { PostSWRResponse } from "./post";
 
 export function UserProfile({ id }: { id: string }) {
   const {
     data: userData,
     isLoading: userIsLoading,
     error: userError,
-  } = useSWR(`/api/v1/users/${id}`, fetcher);
+  } = getUser(id);
   const {
     data: userPostsData,
     isLoading: postsIsLoading,
     error: userPostsError,
-  } = useSWR(`/api/v1/users/${id}/posts`, fetcher);
+  }: PostSWRResponse = getPostsByUserId(id);
 
   if (userPostsError || userError) return <div>failed to load</div>;
   if (userIsLoading || postsIsLoading) return <div>loading...</div>;
@@ -27,6 +27,8 @@ export function UserProfile({ id }: { id: string }) {
   }
 
   assert.array(userPostsData);
+
+  const sortedPosts = sortPostsByDate(userPostsData);
 
   return (
     <div className="border h-screen w-[38rem] flex flex-col">
@@ -41,14 +43,7 @@ export function UserProfile({ id }: { id: string }) {
         </div>
       </div>
       <ScrollArea className="flex-1 overflow-y-auto">
-        {userPostsData
-          .sort(
-            (a: any, b: any) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
-          .map((post: any) => (
-            <Post key={post.id} post={post} />
-          ))}
+        <PostList posts={sortedPosts} />
       </ScrollArea>
     </div>
   );
