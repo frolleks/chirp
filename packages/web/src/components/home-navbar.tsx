@@ -45,13 +45,13 @@ export function HomeNavbar() {
         </Button>
       </Link>
       {session ? (
-        <Link href={`/users/${session.user.id}`}>
+        <Link href={`/users/${session.user.username}`}>
           <Button
             className="justify-start gap-2 w-full"
             variant="ghost"
             size="sm"
           >
-            {pathname === `/users/${session.user.id}` ? (
+            {pathname === `/users/${session.user.username}` ? (
               <Icon icon="bxs:user" fontSize={20} />
             ) : (
               <Icon icon="bx:user" fontSize={20} />
