@@ -78,6 +78,7 @@ posts.get("/", async (c) => {
           },
         },
       },
+      limit: maxPosts,
     });
 
     return c.json(allPosts);
