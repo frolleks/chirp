@@ -1,11 +1,14 @@
 import { Hono } from "hono";
-import { lucia } from "./lib/lucia";
-import { getCookie } from "hono/cookie";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { db } from "./lib/db";
-import { posts as postsTable } from "./lib/db/schema";
-import { eq } from "drizzle-orm";
+import { getCookie } from "hono/cookie";
+import {
+  createPost,
+  fetchPostById,
+  fetchPosts,
+  getSessionIdFromRequest,
+} from "./lib/helpers";
+import { lucia } from "./lib/lucia";
 
 export const posts = new Hono();
 
@@ -20,12 +23,7 @@ posts.post(
   async (c) => {
     try {
       const body = c.req.valid("json");
-      const sessionId =
-        getCookie(c, "auth_session") || c.req.header("Authorization");
-
-      if (!sessionId) {
-        return c.status(401);
-      }
+      const sessionId = await getSessionIdFromRequest(c);
 
       const session = await lucia.validateSession(sessionId);
 
@@ -33,9 +31,7 @@ posts.post(
         return c.status(401);
       }
 
-      await db
-        .insert(postsTable)
-        .values({ content: body.content, authorId: session.user?.id });
+      await createPost(body.content, session.user!.id);
 
       return c.json({ message: "Post successfully created!" }, 201);
     } catch (error) {
@@ -46,43 +42,34 @@ posts.post(
 );
 
 posts.get("/:id", async (c) => {
-  const id = c.req.param("id");
+  try {
+    const id = c.req.param("id");
+    const post = await fetchPostById(id);
 
-  const post = await db.query.posts.findFirst({
-    where: eq(postsTable.id, id),
-    with: {
-      author: {
-        columns: {
-          id: true,
-          username: true,
-          createdAt: true,
-        },
-      },
-    },
-  });
+    if (!post) {
+      return c.status(404);
+    }
 
-  return c.json(post);
+    return c.json(post);
+  } catch (error) {
+    console.error(error);
+    return c.status(500);
+  }
 });
 
 posts.get("/", async (c) => {
-  const maxPosts = Number(c.req.query("max"));
+  try {
+    const maxPosts = Number(c.req.query("max"));
 
-  if (maxPosts <= 50) {
-    const allPosts = await db.query.posts.findMany({
-      with: {
-        author: {
-          columns: {
-            id: true,
-            username: true,
-            createdAt: true,
-          },
-        },
-      },
-      limit: maxPosts,
-    });
+    if (isNaN(maxPosts) || maxPosts > 50) {
+      return c.status(400);
+    }
+
+    const allPosts = await fetchPosts(maxPosts);
 
     return c.json(allPosts);
+  } catch (error) {
+    console.error(error);
+    return c.status(500);
   }
-
-  return c.status(400);
 });
