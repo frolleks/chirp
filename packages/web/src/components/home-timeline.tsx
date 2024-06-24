@@ -26,7 +26,7 @@ export function HomeTimeline() {
         {data
           .sort(
             (a: any, b: any) => new Date(b.createdAt) - new Date(a.createdAt)
-          ) // Replace 'createdAt' with your timestamp field
+          )
           .map((post: any) => (
             <Post key={post.id} post={post} />
           ))}
