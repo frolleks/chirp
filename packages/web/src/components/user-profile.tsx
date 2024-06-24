@@ -25,6 +25,15 @@ export function UserProfile({ id }: { id: string }) {
     return <div>This account doesn't exist.</div>;
   }
 
+  const sortedPosts = userPostsData.sort(
+    (
+      a: { createdAt: string | number | Date },
+      b: { createdAt: string | number | Date }
+    ) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+  );
+
   return (
     <div className="border h-screen w-[38rem] flex flex-col">
       <div className="p-1.5 border-b">
@@ -38,13 +47,9 @@ export function UserProfile({ id }: { id: string }) {
         </div>
       </div>
       <ScrollArea className="flex-1 overflow-y-auto">
-        {userPostsData
-          .sort(
-            (a: any, b: any) => new Date(b.createdAt) - new Date(a.createdAt)
-          )
-          .map((post: any) => (
-            <Post key={post.id} post={post} />
-          ))}
+        {sortedPosts.map((post: any) => (
+          <Post key={post.id} post={post} />
+        ))}
       </ScrollArea>
     </div>
   );
